@@ -1,5 +1,5 @@
 require "sinatra"
-require "./app.rb"
 require "pry"
+require File.expand_path '../app.rb', __FILE__
 
 run App

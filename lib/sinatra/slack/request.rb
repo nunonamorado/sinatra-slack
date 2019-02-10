@@ -1,12 +1,14 @@
 module Sinatra
   module Slack
     class Request
-      attr_reader :context, :args
+      attr_reader :args
   
-      def initialize(context, args)
+      def initialize(args)
         @context = context
         @args = args
       end
+
+      
     end
   end
 end

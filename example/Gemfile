@@ -2,11 +2,12 @@ source "https://rubygems.org/"
 
 gem "sinatra"
 gem "sinatra-contrib"
+gem "mustermann"
 gem "bcrypt"
+gem "httparty"
 
 group :development do
-  gem "guard-shotgun", :git => "https://github.com/rchampourlier/guard-shotgun.git"
-
   gem "pry"
   gem "pry-byebug"
+  gem "better_errors"
 end
