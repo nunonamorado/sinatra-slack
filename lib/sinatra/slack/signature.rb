@@ -2,8 +2,8 @@ require "sinatra/base"
 require "base64"
 
 module Sinatra
-  module Security
-    module SlackSignature
+  module Slack
+    module Signature
 
       class HMACSHA256
         def self.hmac_signed(to_sign, hmac_key)
@@ -42,5 +42,5 @@ module Sinatra
     end    
   end
 
-  register Security::SlackSignature
+  register Slack::Signature
 end

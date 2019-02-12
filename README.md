@@ -1,8 +1,6 @@
 # Sinatra::Slack
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/sinatra/slack`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Creating your first Slack Slash Command application has never been to easy. With `sinatra-slack`
 
 ## Installation
 
@@ -22,7 +20,28 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+``` ruby
+require "sinatra/base"
+require "sinatra/slack"
+
+class App < Sinatra::Base
+  register Sinatra::Security::SlackSignature
+  register Sinatra::SlackCommands  
+  register Sinatra::SlackActions  
+
+  configure :production, :development do
+    enable :logging
+  end
+
+  verify_slack_request secret: ENV["SLACK_SIGNING_SECRET"]
+  commands_endpoint "/slack/commands"
+  actions_endpoint "/slack/actions"
+
+  command "/command *sub_command :spot_name" do |sub_command, spot_name|
+    "Executed subcommand today with subcommand: #{sub_command} args:  #{spot_name}"
+  end
+end
+```
 
 ## Development
 

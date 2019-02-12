@@ -5,6 +5,7 @@ gem "thin"
 gem "sinatra-contrib"
 gem "mustermann"
 gem "httparty"
+gem "sinatra-slack", path: "../"
 
 group :development do
   gem "pry"

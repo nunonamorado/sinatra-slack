@@ -1,14 +1,10 @@
 require "sinatra/base"
-require "httparty"
-
-require_relative "../lib/sinatra/slack_commands"
-require_relative "../lib/sinatra/slack_actions"
-require_relative "../lib/sinatra/security/slack_signature"
+require "sinatra/slack"
 
 class App < Sinatra::Base
-  register Sinatra::Security::SlackSignature
-  register Sinatra::SlackCommands  
-  register Sinatra::SlackActions  
+  register Sinatra::Slack::Signature
+  register Sinatra::Slack::Commands  
+  register Sinatra::Slack::Actions  
 
   configure :production, :development do
     enable :logging
@@ -18,7 +14,7 @@ class App < Sinatra::Base
   commands_endpoint "/slack/commands"
   actions_endpoint "/slack/actions"
 
-  command "/surf *sub_command :spot_name" do |sub_command, spot_name|
+  command "/command *sub_command :spot_name" do |sub_command, spot_name|
     "Executed subcommand today with subcommand: #{sub_command} args:  #{spot_name}"
   end
 
