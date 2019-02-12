@@ -1,10 +1,11 @@
 source "https://rubygems.org/"
 
 gem "sinatra"
+gem "thin"
 gem "sinatra-contrib"
 gem "mustermann"
-gem "bcrypt"
 gem "httparty"
+gem "sinatra-slack", path: "../"
 
 group :development do
   gem "pry"
