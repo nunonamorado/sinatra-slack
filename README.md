@@ -1,6 +1,8 @@
 # Sinatra::Slack
 
-Creating your first Slack Slash Command application has never been to easy. With `sinatra-slack`
+> Note: WIP
+
+Creating your first Slack Slash Command application has never been to easy. Combining `sinatra` and `sinatra-slack` DSL, you can quickly create a app that processes Slach Commands with ease.
 
 ## Installation
 
@@ -25,9 +27,9 @@ require "sinatra/base"
 require "sinatra/slack"
 
 class App < Sinatra::Base
-  register Sinatra::Security::SlackSignature
-  register Sinatra::SlackCommands  
-  register Sinatra::SlackActions  
+  register Sinatra::Slack::Signature
+  register Sinatra::Slack::Commands  
+  register Sinatra::Slack::Actions  
 
   configure :production, :development do
     enable :logging
