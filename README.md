@@ -38,7 +38,7 @@ class App < Sinatra::Base
   actions_endpoint "/slack/actions"
 
   command "/command *sub_command :spot_name" do |sub_command, spot_name|
-    "Executed subcommand today with subcommand: #{sub_command} args:  #{spot_name}"
+    "Executed *command* command \n[subcommand]: #{sub_command} \n[args]:  #{spot_name}"
   end
 end
 ```

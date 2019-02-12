@@ -1,5 +1,5 @@
 require "sinatra/base"
-require "sinatra/slack"
+require_relative "../lib/sinatra/slack"
 
 class App < Sinatra::Base
   register Sinatra::Slack::Signature
@@ -14,8 +14,8 @@ class App < Sinatra::Base
   commands_endpoint "/slack/commands"
   actions_endpoint "/slack/actions"
 
-  command "/command *sub_command :spot_name" do |sub_command, spot_name|
-    "Executed subcommand today with subcommand: #{sub_command} args:  #{spot_name}"
+  command "/surf *sub_command :spot_name" do |sub_command, spot_name|
+    "Executed *surf* command \n[subcommand]: #{sub_command} \n[args]:  #{spot_name}"
   end
 
   # action :action do |value|
