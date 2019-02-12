@@ -20,6 +20,10 @@ Or install it yourself as:
 
     $ gem install sinatra-slack
 
+## Example
+
+Go to folder example for more information. Learn how to create a Slack App in https://api.slack.com
+
 ## Usage
 
 ``` ruby
