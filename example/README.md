@@ -7,7 +7,7 @@ bundle install
 
 2. Launch server
 ``` shell
-shotgun -p 3000
+bundle exec rackup
 ```
 
 3. Launch ngrok
