@@ -10,5 +10,4 @@ gem "sinatra-slack", path: "../"
 group :development do
   gem "pry"
   gem "pry-byebug"
-  gem "better_errors"
 end

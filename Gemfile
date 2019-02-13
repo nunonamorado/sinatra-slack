@@ -6,10 +6,11 @@ gem "thin"
 gem "sinatra-contrib"
 gem "mustermann"
 gem "httparty"
+gem "concurrent-ruby"
 
-group :development do  
+group :development do
   gem "rake"
   gem "rspec"
   gem "pry"
-  gem "pry-byebug"  
+  gem "pry-byebug"
 end

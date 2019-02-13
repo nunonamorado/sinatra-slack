@@ -7,14 +7,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     backports (3.11.4)
-    better_errors (2.5.0)
-      coderay (>= 1.0.0)
-      erubi (>= 1.0.0)
-      rack (>= 0.9.0)
     byebug (10.0.2)
     coderay (1.1.2)
     daemons (1.3.1)
-    erubi (1.8.0)
     eventmachine (1.2.7)
     httparty (0.16.4)
       mime-types (~> 3.0)
@@ -57,7 +52,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  better_errors
   httparty
   mustermann
   pry
