@@ -7,6 +7,8 @@ class App < Sinatra::Base
   register Sinatra::Slack::Commands
   register Sinatra::Slack::Actions
 
+  helpers Sinatra::Slack::Helpers
+
   configure :production, :development do
     enable :logging
     set :threaded, false
@@ -17,38 +19,23 @@ class App < Sinatra::Base
   actions_endpoint "/slack/actions"
 
   command "/surf *sub_command :spot_name" do |sub_command, spot_name|
-    case sub_command
-    when "tomorrow"
-      EM.defer do
-        send_to_channel(params["response_url"], sub_command, spot_name)
+    slack_response "spot_info" do |r|
+      r.text = "Executed command 'surf' with subcommand '#{sub_command}' and spot_name: '#{spot_name}''"
+
+      r.attachment do |a|
+        a.fallback = "This is a fallback"
+        a.title = "Please choose one from the following"
+
+        a.action_button "surf_spot", "Choice 1", "1"
+        a.action_button "surf_spot", "Choice 2", "2"
+        a.action_button "surf_spot", "Choice 3", "3"
       end
-      "Getting info..."
-    else
-      "Executed *surf* command \n[subcommand]: #{sub_command} \n[args]:  #{spot_name}"
     end
   end
 
-  # action :action do |value|
-  #   defer do
-  #     spot_info = SurfForecaster.get_spot_info(value)
-  #     result = SurfForecaster.get_spot_forecast(value, spot_info[:initstr])
-  #     result.to_slack_response
-  #   end
-
-  #   200
-  # end
-
-  private
-
-  def send_to_channel(url, *opts)
-    options = {
-      headers: {
-        "Content-type": "application/json"
-      },
-      body: {
-        text: "Sent after #{opts}"
-      }.to_json
-    }
-    HTTParty.post(url, options)
+  action "spot_info" do |spot_id|
+    slack_response do |r|
+      r.text = "Executed action 'spot_info' with #{spot_id}"
+    end
   end
 end

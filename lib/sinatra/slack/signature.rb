@@ -1,5 +1,4 @@
 require "sinatra/base"
-require "base64"
 
 module Sinatra
   module Slack
@@ -10,13 +9,13 @@ module Sinatra
           sha256 = OpenSSL::Digest.new('sha256')
           OpenSSL::HMAC.hexdigest(sha256, hmac_key, to_sign)
         end
-      end  
+      end
 
       ##############################################################
       #  Go to this page for the verification process:             #
       #  https://api.slack.com/docs/verifying-requests-from-slack  #
       ##############################################################
-      def verify_slack_request(secret: "")    
+      def verify_slack_request(secret: "")
         before do
           # these are not the HTTP Headers names sent from
           # Slack because Rack renames them
@@ -27,19 +26,19 @@ module Sinatra
 
           # The request timestamp is more than five minutes from local time.
           # It could be a replay attack, so let's ignore it.
-          halt 401, "Unauthorized!" if (Time.now.to_i - slack_request_timestamp.to_i).abs > 60 * 5          
-         
+          halt 401, "Unauthorized!" if (Time.now.to_i - slack_request_timestamp.to_i).abs > 60 * 5
+
           # in case someone already read it
           request.body.rewind
 
-          # From Slack API docs, the "v0" is always fixed for now 
-          sig_basestring = "v0:#{slack_request_timestamp}:#{request.body.read}"          
+          # From Slack API docs, the "v0" is always fixed for now
+          sig_basestring = "v0:#{slack_request_timestamp}:#{request.body.read}"
           signed = 'v0=' + HMACSHA256.hmac_signed(sig_basestring, secret)
 
           halt 401, "Unauthorized!" unless signed == slack_request_signature
         end
       end
-    end    
+    end
   end
 
   register Slack::Signature

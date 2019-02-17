@@ -4,28 +4,27 @@ require "mustermann"
 module Sinatra
   module Slack
     module Commands
-
-      # module Helpers
-      #   def defer(&block)
-      #     self.class.pool.post &block
-      #   end
-      # end
-
-      # def self.registered(app)
-      #   app.helpers Commands::Helpers
-      # end
-
-      def commands_endpoint(path)
+      def commands_endpoint(path, defer: true, message: nil)
         settings.post(path) do
-          logger.info "Received: #{params}"
+          logger.info "Received: #{command}"
 
-          signature = "#{params["command"]} #{params["text"]}"
+          signature = "#{command.command} #{command.text}"
           command_pattern = self.class.match_signature(signature)
 
           halt 400, "Unknown Command" unless command_pattern
 
           command_handler = self.class.get_handler(command_pattern)
-          command_params = self.class.fetch_command_params(command_pattern, signature)
+          command_params = command_pattern.params(signature).values
+
+          if defer
+            EM.defer do
+              message = command_handler.bind(self).call(*command_params)
+              channel.send(message)
+            end
+
+            return (message.nil? ? "Working..." : message)
+          end
+
           command_handler.bind(self).call(*command_params)
         end
       end
@@ -45,16 +44,8 @@ module Sinatra
         instance_method method_name
       end
 
-      def fetch_command_params(pattern, signature)
-        pattern.params(signature).values
-      end
-
       def match_signature(signature)
         @commands.find {|p| p.match(signature)}
-      end
-
-      def pool
-        @pool ||= Concurrent::CachedThreadPool.new
       end
 
       private
