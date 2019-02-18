@@ -30,7 +30,7 @@ module Sinatra
       end
 
       def command(command_signature, &block)
-        pattern = parse_signature(command_signature)
+        pattern = parse_command_signature(command_signature)
         method_name = get_handler_name(pattern)
         define_method(method_name, &block)
       end
@@ -50,7 +50,7 @@ module Sinatra
 
       private
 
-      def parse_signature(signature)
+      def parse_command_signature(signature)
         @commands ||= []
         @commands << Mustermann.new(signature)
         @commands.last

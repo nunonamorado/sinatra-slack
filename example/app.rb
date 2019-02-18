@@ -19,7 +19,7 @@ class App < Sinatra::Base
   actions_endpoint "/slack/actions"
 
   command "/surf *sub_command :spot_name" do |sub_command, spot_name|
-    slack_response "spot_info" do |r|
+    slack_response "spot_info_#{sub_command}" do |r|
       r.text = "Executed command 'surf' with subcommand '#{sub_command}' and spot_name: '#{spot_name}''"
 
       r.attachment do |a|
@@ -33,9 +33,9 @@ class App < Sinatra::Base
     end
   end
 
-  action "spot_info" do |spot_id|
+  action "spot_info(_:sub_command)?" do |sub_command, spot_id|
     slack_response do |r|
-      r.text = "Executed action 'spot_info' with #{spot_id}"
+      r.text = "Executed action 'spot_info' with 'id' (#{sub_command}) and #{spot_id}"
     end
   end
 end

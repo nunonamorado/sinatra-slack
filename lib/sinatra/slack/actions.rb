@@ -12,37 +12,53 @@ module Sinatra
         settings.post(path) do
           logger.info "Received: #{params}"
 
-          action_handler = self.class.match_action(action.name)
+          action_pattern = self.class.match_action(action.name)
 
-          halt 400, "Unknown Action" unless action_handler
+          halt 400, "Unknown Action" unless action_pattern
 
-          action_value = action.value
+          action_handler = self.class.get_handler(action_pattern)
+          action_params = action_pattern.params(action.name).values
+
+          action_params << action.value
 
           if defer
             EM.defer do
-              message = action_handler.bind(self).call(action_value)
+              message = action_handler.bind(self).call(*action_params)
               channel.send(message)
             end
 
             return (message.nil? ? "Working..." : message)
           end
 
-          action_handler.bind(self).call(action_value)
+          action_handler.bind(self).call(*action_params)
         end
       end
 
-      def action(action_name, &block)
-        method_name = get_handler_name(action_name)
+      def action(action_signature, &block)
+        pattern = parse_action_signature(action_signature)
+        method_name = get_handler_name(pattern)
         define_method(method_name, &block)
       end
 
-      def get_handler_name(action_name)
-        "#{action_name}_action_handler"
+      def get_handler_name(pattern)
+        "#{pattern.safe_string}_action_handler"
       end
 
-      def match_action(action_name)
-        method_name = get_handler_name(action_name)
-        instance_method method_name if self.instance_methods.any? { |m| m.to_s == method_name }
+      def get_handler(pattern)
+        method_name = get_handler_name(pattern)
+        instance_method method_name
+      end
+
+      def match_action(signature)
+        @actions.find {|p| p.match(signature)}
+      end
+
+      private
+
+      def parse_action_signature(signature)
+        @actions ||= []
+        @actions << Mustermann.new(signature)
+        @actions.last
       end
     end
   end
