@@ -29,6 +29,16 @@ class App < Sinatra::Base
         a.action_button "surf_spot", "Choice 1", "1"
         a.action_button "surf_spot", "Choice 2", "2"
         a.action_button "surf_spot", "Choice 3", "3"
+        a.action_menu "tag", "Pick a tag", [
+          {
+            text: "Tag1",
+            value: "tag1"
+          },
+          {
+            text: "Tag2",
+            value: "tag2"
+          }
+        ]
       end
     end
   end

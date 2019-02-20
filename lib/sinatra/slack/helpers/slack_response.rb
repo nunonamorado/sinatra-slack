@@ -41,6 +41,7 @@ module Sinatra
           @attachment_type = "default"
           @color = "#3AA3E3"
           @actions = []
+
           @text = ""
           @fallback = ""
           @image_url = ""
@@ -53,6 +54,15 @@ module Sinatra
             text: text,
             type: "button",
             value: value
+          }
+        end
+
+        def action_menu(name, text, options)
+          @actions << {
+            name: name,
+            text: text,
+            type: "select",
+            options: options
           }
         end
 

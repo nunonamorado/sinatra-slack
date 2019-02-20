@@ -15,7 +15,8 @@ module Sinatra
           return unless payload["type"] == "interactive_message"
 
           action = payload["actions"].first
-          value = action["value"]
+          value = action["value"] if action.has_key?("value")
+          value = action["selected_options"].first["value"] if action.has_key?("selected_options")
           name = payload["callback_id"]
 
           self.new(name, value)
