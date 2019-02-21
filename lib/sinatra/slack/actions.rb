@@ -13,16 +13,14 @@ module Sinatra
           halt 400, "Unknown action" unless action_pattern
 
           request_handler = self.class.get_handler(action.name)
-          request_params = action_pattern.params(action.name).values
+          request_params = action_pattern.params(action.name).values || []
           request_params << action.value
 
           handle_request(defer, message, request_handler, request_params)
         end
       end
 
-      def action(signature, &block)
-        register_handler(signature, &block)
-      end
+      Actions.send(:alias_method, :action, :register_handler)
     end
   end
 

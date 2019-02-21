@@ -19,11 +19,9 @@ module Sinatra
           handle_request(defer, message, request_handler, request_params)
         end
       end
-
-      def command(signature, &block)
-        register_handler(signature, &block)
-      end
     end
+
+    Commands.send(:alias_method, :command, :register_handler)
   end
 
   register Slack::Commands
