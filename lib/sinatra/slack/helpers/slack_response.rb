@@ -4,81 +4,51 @@ module Sinatra
   module Slack
     module Helpers
       class SlackResponse
-        attr_accessor :text
+        attr_accessor :text, :channel, :blocks, :mrkdwn
 
-        def initialize(callback_id)
-          @callback_id = callback_id
+        def initialize()
           @text = nil
-          @attachments = []
+          @channel = ""
+          @mrkdwn = false
+          @blocks = []
         end
 
-        def attachment
-          return unless block_given?
+        def section(&block)
+          add_block(SectionBlock.new, &block)
+        end
 
-          attachment = Attachment.new(@callback_id)
-          yield attachment
-          @attachments << attachment
+        def image(&block)
+          add_block(ImageBlock.new, &block)
+        end
+
+        def divider
+          add_block(Divider.new)
+        end
+
+        def actions(&block)
+          add_block(ActionsBlock.new, &block)
+        end
+
+        def context(&block)
+          add_block(ContextBlock.new, &block)
         end
 
         def to_json
           response = {}
 
           response[:text] = @text if @text
-          response[:attachments] = @attachments.map(&:to_json) unless @attachments.empty?
+          response[:mrkdwn] = @mrkdwn
+          response[:channel] = @channel unless @channel.empty?
+          response[:blocks] = @blocks.map(&:to_json) if @attachments.size > 0
 
           response.to_json
         end
-      end
 
-      class Attachment
-        attr_accessor :title, :color, :attachment_type,
-                      :text, :fallback, :image_url
+        private
 
-        def initialize(callback_id)
-          @callback_id = callback_id
-          @attachment_type = 'default'
-          @color = '#3AA3E3'
-          @actions = []
-
-          @text = ''
-          @fallback = ''
-          @image_url = ''
-          @title = ''
-        end
-
-        def action_button(name, text, value)
-          @actions << {
-            name: name,
-            text: text,
-            type: 'button',
-            value: value
-          }
-        end
-
-        def action_menu(name, text, options)
-          @actions << {
-            name: name,
-            text: text,
-            type: 'select',
-            options: options
-          }
-        end
-
-        def to_json
-          att_obj = {}
-
-          att_obj[:callback_id] = @callback_id
-
-          att_obj[:title] = title unless title.empty?
-          att_obj[:color] = color unless color.empty?
-          att_obj[:attachment_type] = attachment_type unless attachment_type.empty?
-          att_obj[:text] = text unless text.empty?
-          att_obj[:fallback] = fallback unless fallback.empty?
-          att_obj[:image_url] = image_url unless image_url.empty?
-
-          att_obj[:actions] = @actions unless @actions.empty?
-
-          att_obj
+        def add_block(msg_block, &block)
+          yield msg_block if block_given?
+          @blocks << msg_block
         end
       end
     end
