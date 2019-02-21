@@ -7,15 +7,17 @@ class App < Sinatra::Base
   register Sinatra::Slack::Commands
   register Sinatra::Slack::Actions
 
-  helpers Sinatra::Slack::Helpers
+  helpers Sinatra::Slack::InstanceHelpers
 
   configure :production, :development do
     enable :logging
     set :threaded, false
+
+    before { logger.info "Received: #{params}" }
   end
 
   verify_slack_request secret: ENV["SLACK_SIGNING_SECRET"]
-  commands_endpoint "/slack/commands"
+  commands_endpoint "/slack/commands", message: ":man-surfing: Fetching your report..."
   actions_endpoint "/slack/actions"
 
   command "/surf *sub_command :spot_name" do |sub_command, spot_name|
@@ -26,19 +28,18 @@ class App < Sinatra::Base
         a.fallback = "This is a fallback"
         a.title = "Please choose one from the following"
 
-        a.action_button "surf_spot", "Choice 1", "1"
-        a.action_button "surf_spot", "Choice 2", "2"
-        a.action_button "surf_spot", "Choice 3", "3"
-        a.action_menu "tag", "Pick a tag", [
+        3.times.each do |i|
+          a.action_button "surf_spot", "Choice #{i}", i.to_s
+        end
+
+        options = 5.times.map do |i|
           {
-            text: "Tag1",
-            value: "tag1"
-          },
-          {
-            text: "Tag2",
-            value: "tag2"
+            text: "Tag#{i}",
+            value: "tag#{i}"
           }
-        ]
+        end
+
+        a.action_menu "tag", "Pick a tag", options
       end
     end
   end

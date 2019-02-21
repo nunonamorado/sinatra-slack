@@ -1,4 +1,5 @@
 require_relative "./slack/commands"
 require_relative "./slack/actions"
 require_relative "./slack/signature"
-require_relative "./slack/helpers"
+require_relative "./slack/class_helpers"
+require_relative "./slack/instance_helpers"

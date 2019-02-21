@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sinatra-slack (0.5.0)
+    sinatra-slack (0.6.0)
 
 GEM
   remote: https://rubygems.org/
