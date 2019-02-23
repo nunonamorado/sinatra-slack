@@ -1,10 +1,13 @@
-require_relative "./helpers/command_request"
-require_relative "./helpers/channel"
-require_relative "./helpers/slack_response"
-require_relative "./helpers/action_request"
+# frozen_string_literal: true
+
+require_relative './helpers/command_request'
+require_relative './helpers/channel'
+require_relative './helpers/slack_response'
+require_relative './helpers/action_request'
 
 module Sinatra
   module Slack
+    # Instance level helper methods
     module InstanceHelpers
       def command
         @command ||= Helpers::CommandRequest.new(params)
@@ -18,7 +21,7 @@ module Sinatra
         @channel ||= Helpers::Channel.parse(params)
       end
 
-      def slack_response(callback_id = "", &block)
+      def slack_response(callback_id)
         s_resp = Helpers::SlackResponse.new(callback_id)
         yield s_resp if block_given?
         s_resp

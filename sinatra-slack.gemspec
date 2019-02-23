@@ -1,17 +1,18 @@
+# frozen_string_literal: true
 
-lib = File.expand_path("../lib", __FILE__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "sinatra/slack/version"
+require 'sinatra/slack/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "sinatra-slack"
+  spec.name          = 'sinatra-slack'
   spec.version       = Sinatra::Slack::VERSION
-  spec.authors       = ["Nuno Namorado"]
-  spec.email         = ["n.namorado@gmail.com"]
+  spec.authors       = ['Nuno Namorado']
+  spec.email         = ['n.namorado@gmail.com']
 
-  spec.summary       = %q{Create Slack apps with a simple Sinatra specific DSL}
-  spec.homepage      = "https://github.com/nunonamorado/sinatra-slack"
-  spec.license       = "MIT"
+  spec.summary       = 'Create Slack apps with a simple Sinatra specific DSL'
+  spec.homepage      = 'https://github.com/nunonamorado/sinatra-slack'
+  spec.license       = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
@@ -28,8 +29,8 @@ Gem::Specification.new do |spec|
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files         = Dir.glob("lib/**/*") + %w[CODE_OF_CONDUCT.md LICENSE.txt README.md]
-  spec.bindir        = "bin"
+  spec.files         = Dir.glob('lib/**/*') + %w[CODE_OF_CONDUCT.md LICENSE.txt README.md]
+  spec.bindir        = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.require_paths = ['lib']
 end
