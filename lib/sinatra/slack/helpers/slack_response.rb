@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Sinatra
   module Slack
     module Helpers
@@ -10,11 +12,7 @@ module Sinatra
           @attachments = []
         end
 
-        def text(text)
-          @text = text
-        end
-
-        def attachment(&block)
+        def attachment
           return unless block_given?
 
           attachment = Attachment.new(@callback_id)
@@ -26,7 +24,7 @@ module Sinatra
           response = {}
 
           response[:text] = @text if @text
-          response[:attachments] = @attachments.map(&:to_json) if @attachments.size > 0
+          response[:attachments] = @attachments.map(&:to_json) unless @attachments.empty?
 
           response.to_json
         end
@@ -38,21 +36,21 @@ module Sinatra
 
         def initialize(callback_id)
           @callback_id = callback_id
-          @attachment_type = "default"
-          @color = "#3AA3E3"
+          @attachment_type = 'default'
+          @color = '#3AA3E3'
           @actions = []
 
-          @text = ""
-          @fallback = ""
-          @image_url = ""
-          @title = ""
+          @text = ''
+          @fallback = ''
+          @image_url = ''
+          @title = ''
         end
 
         def action_button(name, text, value)
           @actions << {
             name: name,
             text: text,
-            type: "button",
+            type: 'button',
             value: value
           }
         end
@@ -61,7 +59,7 @@ module Sinatra
           @actions << {
             name: name,
             text: text,
-            type: "select",
+            type: 'select',
             options: options
           }
         end
@@ -78,7 +76,7 @@ module Sinatra
           att_obj[:fallback] = fallback unless fallback.empty?
           att_obj[:image_url] = image_url unless image_url.empty?
 
-          att_obj[:actions] = @actions if @actions.size > 0
+          att_obj[:actions] = @actions unless @actions.empty?
 
           att_obj
         end

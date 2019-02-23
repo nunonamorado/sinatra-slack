@@ -15,7 +15,7 @@ class App < Sinatra::Base
     before { logger.info "Received: #{params}" }
   end
 
-  verify_slack_request secret: ENV['SLACK_SIGNING_SECRET']
+  verify_slack_request ENV['SLACK_SIGNING_SECRET']
   commands_endpoint '/slack/commands', message: ':man-surfing: Fetching your' \
                                                 ' report...'
   actions_endpoint '/slack/actions'
@@ -46,9 +46,9 @@ class App < Sinatra::Base
   end
 
   action 'spot_info(_:sub_command)?' do |sub_command, spot_id|
-    slack_response do |r|
-      r.text = "Executed action 'spot_info' with 'id' (#{sub_command})\
-                 and #{spot_id}"
+    slack_response "spot_info_#{sub_command}" do |r|
+      r.text = "Executed action 'spot_info' with 'id' (#{sub_command})" \
+                " and choice #{spot_id}"
     end
   end
 end

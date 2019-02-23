@@ -1,25 +1,27 @@
+# frozen_string_literal: true
+
 module Sinatra
   module Slack
     module Helpers
       class ActionRequest
         attr_reader :name, :value
 
-        def initialize(name, value, body = nil)
+        def initialize(name, value, _body = nil)
           @name = name
           @value = value
         end
 
         def self.parse(params)
-          payload = JSON.parse params["payload"]
+          payload = JSON.parse params['payload']
 
-          return unless payload["type"] == "interactive_message"
+          return unless payload['type'] == 'interactive_message'
 
-          action = payload["actions"].first
-          value = action["value"] if action.has_key?("value")
-          value = action["selected_options"].first["value"] if action.has_key?("selected_options")
-          name = payload["callback_id"]
+          action = payload['actions'].first
+          value = action['value'] if action.key?('value')
+          value = action['selected_options'].first['value'] if action.key?('selected_options')
+          name = payload['callback_id']
 
-          self.new(name, value)
+          new(name, value)
         end
       end
     end

@@ -9,24 +9,12 @@ module Sinatra
   module Slack
     def self.registered(app)
       app.helpers Slack::InstanceHelpers
-      app.helpers Slack::SignatureHelpers
-
-      Slack.send(:alias_method, :action, :register_handler)
-      Slack.send(:alias_method, :command, :register_handler)
     end
 
-    ##############################################################
-    #  Go to this page for the verification process:             #
-    #  https://api.slack.com/docs/verifying-requests-from-slack  #
-    #                                                            #
-    #                                                            #
-    #  Defines a new before action for verifying all requests    #
-    #  This should be called before any other                    #
-    ##############################################################
-    def verify_slack_request(secret: '')
+    #  Defines a new before action for verifying all requests
+    def verify_slack_request(secret)
       before do
-        halt 401, 'Invalid Headers' unless valid_headers? ||
-                                          compute_signature(secret) == slack_signature
+        halt 401, 'Invalid Headers' unless authorized?(secret)
       end
     end
 
@@ -62,18 +50,23 @@ module Sinatra
       end
     end
 
-    ####################
-    # Helper methods
-    ####################
+    # Checks for Slack defined HTTP headers
+    # and computes the request signature (HMAC). If provided signature
+    # is the same as the computed one, the request is valid.
+    #
+    # Go to this page for the verification process:
+    # https://api.slack.com/docs/verifying-requests-from-slack
+    def authorized?(secret)
+      valid_headers? && compute_signature(secret) == slack_signature
+    end
+
     def register_handler(signature, &block)
       pattern = parse_signature(signature)
       method_name = get_handler_name(pattern)
       define_method(method_name, &block)
     end
-
-    def get_handler_name(pattern)
-      "#{pattern.safe_string}_handler"
-    end
+    alias action register_handler
+    alias command register_handler
 
     def get_handler(signature)
       pattern = get_pattern(signature)
@@ -87,12 +80,49 @@ module Sinatra
       @patterns.find { |p| p.match(signature) }
     end
 
+    private
+
+    def get_handler_name(pattern)
+      "#{pattern.safe_string}_handler"
+    end
+
     def parse_signature(signature)
       @patterns ||= []
       raise StandardError, 'Signature already defined' if get_pattern(signature)
 
       @patterns << Mustermann.new(signature)
       @patterns.last
+    end
+
+    # Helper methods for Slack request validation
+    def slack_signature
+      @slack_signature ||= env['HTTP_X_SLACK_SIGNATURE']
+    end
+
+    def slack_timestamp
+      @slack_timestamp ||= env['HTTP_X_SLACK_REQUEST_TIMESTAMP']
+    end
+
+    def valid_headers?
+      return false unless slack_signature || slack_timestamp
+
+      # The request timestamp is more than five minutes from local time.
+      # It could be a replay attack, so let's ignore it.
+      (Time.now.to_i - slack_timestamp.to_i).abs <= 60 * 5
+    end
+
+    def compute_signature(secret)
+      # in case someone already read it
+      request.body.rewind
+
+      # From Slack API docs, the "v0" is always fixed for now
+      sig_basestring = "v0:#{slack_timestamp}:#{request.body.read}"
+      "v0=#{hmac_signed(sig_basestring, secret)}"
+    end
+
+    def hmac_signed(to_sign, hmac_key)
+      sha256 = OpenSSL::Digest.new('sha256')
+      OpenSSL::HMAC.hexdigest(sha256, hmac_key, to_sign)
     end
   end
 
