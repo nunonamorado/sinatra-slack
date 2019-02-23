@@ -3,10 +3,9 @@ gemspec
 
 gem "sinatra"
 gem "thin"
-gem "sinatra-contrib"
 gem "mustermann"
 gem "httparty"
-gem "concurrent-ruby"
+gem "async_sinatra"
 
 group :development do
   gem "rake"
