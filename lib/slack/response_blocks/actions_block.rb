@@ -1,11 +1,13 @@
-module ResponseBlocks
+# frozen_string_literal: true
+
+module Slack
   class ActionsBlock < Block
-    self.type = "actions"
+    self.type = 'actions'
 
     attr_reader :elements
     serialize_attributes :elements
 
-    def element(element_type, &block)
+    def element(element_type)
       element = Object.const_get(element_type)
       yield element if block_given?
 

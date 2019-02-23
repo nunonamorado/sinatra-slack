@@ -1,6 +1,7 @@
-module ResponseBlocks
+# frozen_string_literal: true
+
+module Slack
   class Block
-    attr_reader :type
     attr_accessor :block_id
 
     def self.serialize_attributes(*attrs)
@@ -27,12 +28,11 @@ module ResponseBlocks
     private
 
     def serialize_object(obj)
-      if val.responds_to?(:to_json)
-        val.to_json
-      elsif val.is_a? Enumerable
-        val.map { |o| serialize_object(o) }
-      else
-        val
+      return obj.to_json if val.responds_to?(:to_json)
+
+      return obj.map { |o| serialize_object(o) } if val.is_a? Enumerable
+
+      obj
     end
   end
 end

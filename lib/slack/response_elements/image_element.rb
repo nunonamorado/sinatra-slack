@@ -1,4 +1,4 @@
-module ResponseElements
+module Slack
   class ImageElement
   end
 end

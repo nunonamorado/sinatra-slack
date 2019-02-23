@@ -1,12 +1,14 @@
-module ResponseBlocks
+# frozen_string_literal: true
+
+module Slack
   class SectionBlock < Block
-    self.type = "section"
+    self.type = 'section'
 
     attr_accessor :text
-    attr_reader :fields, :accessory
+    attr_reader :fields
     serialize_attributes :text, :fields, :accessory
 
-    def field(element_type, &block)
+    def field(element_type)
       field = Object.const_get(element_type)
       yield field if block_given?
 
@@ -14,7 +16,7 @@ module ResponseBlocks
       @fields << field
     end
 
-    def accessory(element_type, &block)
+    def accessory(element_type)
       @accessory = Object.const_get(element_type)
       yield @accessory if block_given?
     end
