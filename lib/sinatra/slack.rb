@@ -32,7 +32,7 @@ module Sinatra
         request_handler = self.class.get_handler(signature)
         request_params = command_pattern.params(signature).values
 
-        handle_request(quick_reply, request_handler, request_params)
+        handle_request(request_handler, request_params, quick_reply)
       end
     end
 
@@ -48,7 +48,7 @@ module Sinatra
         request_params = action_pattern.params(action.name).values || []
         request_params << action.value
 
-        handle_request(quick_reply, request_handler, request_params)
+        handle_request(request_handler, request_params, quick_reply)
       end
     end
 
