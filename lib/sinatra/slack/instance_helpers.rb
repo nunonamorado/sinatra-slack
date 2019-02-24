@@ -27,13 +27,13 @@ module Sinatra
         s_resp
       end
 
-      def handle_request(quick_reply = '', request_handler, request_params)
+      def handle_request(request_handler, request_params, quick_reply = '...')
         EM.defer do
           deferred_message = request_handler.bind(self).call(*request_params)
           channel.send(deferred_message)
         end
 
-        quick_reply
+        body quick_reply
       end
 
       # Checks for Slack defined HTTP headers
