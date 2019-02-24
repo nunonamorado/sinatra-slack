@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'sinatra/base'
-require 'httparty'
 require_relative '../lib/sinatra/slack'
 
 # Sinatra Slack Example Application
@@ -10,14 +9,14 @@ class App < Sinatra::Base
 
   configure :production, :development do
     enable :logging
-    set :threaded, false
 
     before { logger.info "Received: #{params}" }
   end
 
   verify_slack_request ENV['SLACK_SIGNING_SECRET']
-  commands_endpoint '/slack/commands', message: ':man-surfing: Fetching your' \
-                                                ' report...'
+  commands_endpoint '/slack/commands',
+                    quick_reply: ':man-surfing: Fetching your report...'
+
   actions_endpoint '/slack/actions'
 
   command '/surf *sub_command :spot_name' do |sub_command, spot_name|

@@ -1,9 +1,6 @@
 source "https://rubygems.org/"
 
-gem "sinatra"
 gem "thin"
-gem "sinatra-contrib"
-gem "mustermann"
 gem "httparty"
 gem "sinatra-slack", path: "../"
 

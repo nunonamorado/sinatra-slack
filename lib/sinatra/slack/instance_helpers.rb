@@ -27,17 +27,54 @@ module Sinatra
         s_resp
       end
 
-      def handle_request(defer, message, request_handler, request_params)
-        if defer
-          EM.defer do
-            deferred_message = request_handler.bind(self).call(*request_params)
-            channel.send(deferred_message)
-          end
-
-          return message
+      def handle_request(request_handler, request_params, quick_reply = '...')
+        EM.defer do
+          deferred_message = request_handler.bind(self).call(*request_params)
+          channel.send(deferred_message)
         end
 
-        request_handler.bind(self).call(*request_params)
+        body quick_reply
+      end
+
+      # Checks for Slack defined HTTP headers
+      # and computes the request signature (HMAC). If provided signature
+      # is the same as the computed one, the request is valid.
+      #
+      # Go to this page for the verification process:
+      # https://api.slack.com/docs/verifying-requests-from-slack
+      def authorized?(secret)
+        valid_headers? && compute_signature(secret) == slack_signature
+      end
+
+      # Helper methods for Slack request validation
+      def slack_signature
+        @slack_signature ||= env['HTTP_X_SLACK_SIGNATURE']
+      end
+
+      def slack_timestamp
+        @slack_timestamp ||= env['HTTP_X_SLACK_REQUEST_TIMESTAMP']
+      end
+
+      def valid_headers?
+        return false unless slack_signature || slack_timestamp
+
+        # The request timestamp is more than five minutes from local time.
+        # It could be a replay attack, so let's ignore it.
+        (Time.now.to_i - slack_timestamp.to_i).abs <= 60 * 5
+      end
+
+      def compute_signature(secret)
+        # in case someone already read it
+        request.body.rewind
+
+        # From Slack API docs, the "v0" is always fixed for now
+        sig_basestring = "v0:#{slack_timestamp}:#{request.body.read}"
+        "v0=#{hmac_signed(sig_basestring, secret)}"
+      end
+
+      def hmac_signed(to_sign, hmac_key)
+        sha256 = OpenSSL::Digest.new('sha256')
+        OpenSSL::HMAC.hexdigest(sha256, hmac_key, to_sign)
       end
     end
   end
