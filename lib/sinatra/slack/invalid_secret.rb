@@ -2,6 +2,6 @@
 
 module Sinatra
   module Slack
-    VERSION = '0.7.5'
+    class InvalidSlackSecret < RuntimeError; end
   end
 end

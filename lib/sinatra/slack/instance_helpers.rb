@@ -27,7 +27,7 @@ module Sinatra
         s_resp
       end
 
-      def handle_request(request_handler, request_params, quick_reply = '...')
+      def handle_request(request_handler:, request_params:, quick_reply: '...')
         EM.defer do
           deferred_message = request_handler.bind(self).call(*request_params)
           channel.send(deferred_message)
@@ -42,8 +42,11 @@ module Sinatra
       #
       # Go to this page for the verification process:
       # https://api.slack.com/docs/verifying-requests-from-slack
-      def authorized?(secret)
-        valid_headers? && compute_signature(secret) == slack_signature
+      def authorized?
+        raise InvalidSlackSecret, 'Missing secret' unless settings.slack_secret
+
+        valid_headers? &&
+          compute_signature(settings.slack_secret) == slack_signature
       end
 
       # Helper methods for Slack request validation

@@ -13,7 +13,8 @@ class App < Sinatra::Base
     before { logger.info "Received: #{params}" }
   end
 
-  verify_slack_request ENV['SLACK_SIGNING_SECRET']
+  set :slack_secret, ENV['SLACK_SIGNING_SECRET']
+
   commands_endpoint '/slack/commands',
                     quick_reply: ':man-surfing: Fetching your report...'
 

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sinatra-slack (0.7.4)
+    sinatra-slack (0.7.5)
       async_sinatra (~> 1.3.0)
       httparty (~> 0.16.4)
       mustermann (~> 1.0.3)

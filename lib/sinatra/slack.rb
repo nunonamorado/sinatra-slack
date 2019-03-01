@@ -10,45 +10,38 @@ module Sinatra
     def self.registered(app)
       app.register Sinatra::Async
 
+      # Slack signing secret, used for request verification
+      app.set :slack_secret, nil
       app.helpers Slack::InstanceHelpers
-    end
-
-    #  Defines a new before action for verifying all requests
-    def verify_slack_request(secret)
-      before do
-        halt 401, 'Invalid Headers' unless authorized?(secret)
-      end
     end
 
     # Defines a new HTTP POST Handler to receive
     # Slash Command notifications.
     def commands_endpoint(path, quick_reply: '')
-      settings.apost(path) do
+      set_endpoint(path, quick_reply) do
         signature = "#{command.command} #{command.text}"
         command_pattern = self.class.get_pattern(signature)
-
-        halt 400 unless command_pattern
-
-        request_handler = self.class.get_handler(signature)
         request_params = command_pattern.params(signature).values
 
-        handle_request(request_handler, request_params, quick_reply)
+        {
+          request_handler: self.class.get_handler(signature),
+          request_params: request_params
+        }
       end
     end
 
     # Defines a new HTTP POST Handler to receive
     # Actions notifications.
     def actions_endpoint(path, quick_reply: '')
-      settings.apost(path) do
+      set_endpoint(path, quick_reply) do
         action_pattern = self.class.get_pattern(action.name)
-
-        halt 400 unless action_pattern
-
-        request_handler = self.class.get_handler(action.name)
         request_params = action_pattern.params(action.name).values || []
         request_params << action.value
 
-        handle_request(request_handler, request_params, quick_reply)
+        {
+          request_handler: self.class.get_handler(action.name),
+          request_params: request_params
+        }
       end
     end
 
@@ -84,6 +77,25 @@ module Sinatra
 
       @patterns << Mustermann.new(signature)
       @patterns.last
+    end
+
+    def set_endpoint(path, quick_reply, &block)
+      raise StandardError unless block_given?
+
+      define_method("#{path}_options", &block)
+
+      settings.apost(path) do
+        halt 401, 'Invalid Headers' unless authorized?
+
+        get_options = self.class.instance_method "#{path}_options"
+        options = get_options.bind(self).call
+
+        halt 400 unless options
+
+        options[:quick_reply] = quick_reply
+
+        handle_request(options)
+      end
     end
   end
 
