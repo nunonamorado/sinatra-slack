@@ -3,10 +3,12 @@
 module Sinatra
   module Slack
     module Helpers
+      # Representation of a Action request
+      # sent from Slack Servers.
       class ActionRequest
         attr_reader :name, :value
 
-        def initialize(name, value, _body = nil)
+        def initialize(name, value)
           @name = name
           @value = value
         end

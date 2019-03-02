@@ -43,8 +43,6 @@ module Sinatra
       # Go to this page for the verification process:
       # https://api.slack.com/docs/verifying-requests-from-slack
       def authorized?
-        raise InvalidSlackSecret, 'Missing secret' unless settings.slack_secret
-
         valid_headers? &&
           compute_signature(settings.slack_secret) == slack_signature
       end

@@ -3,10 +3,12 @@
 module Sinatra
   module Slack
     module Helpers
+      # Representation of a Slash Command request sent
+      # from Slack servers.
       class CommandRequest
         attr_reader :token, :command, :text, :response_url, :trigger_id,
-                    :user_id, :user_name, :team_id, :team_name, :channel_id
-        :channel_name
+                    :user_id, :user_name, :team_id, :team_name, :channel_id,
+                    :channel_name
 
         def initialize(params = {})
           @params = params

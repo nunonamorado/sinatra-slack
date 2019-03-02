@@ -6,8 +6,11 @@ require_relative './slack/instance_helpers'
 # Sinatra
 module Sinatra
   # Sinatra Module for creating Slack apps with ease
-  module Slack
+  module Slack    
     def self.registered(app)
+      # We will use async request handling so that it's easier
+      # so offload heavier proccessing to a background thread.
+      # Sinatra::Async uses EventMachine.
       app.register Sinatra::Async
 
       # Slack signing secret, used for request verification
@@ -73,14 +76,14 @@ module Sinatra
 
     def parse_signature(signature)
       @patterns ||= []
-      raise StandardError, 'Signature already defined' if get_pattern(signature)
+      raise 'Signature already defined' if get_pattern(signature)
 
       @patterns << Mustermann.new(signature)
       @patterns.last
     end
 
     def set_endpoint(path, quick_reply, &block)
-      raise StandardError unless block_given?
+      raise 'No block given' unless block_given?
 
       define_method("#{path}_options", &block)
 
