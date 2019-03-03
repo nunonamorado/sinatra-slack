@@ -5,7 +5,7 @@ module Sinatra
     module Helpers
       # Represents a message sent to the Slack Channel.
       class SlackResponse
-        attr_accessor :text, :replace_original
+        attr_accessor :text, :replace_original, :mrkdwn
 
         def initialize(callback_id)
           @callback_id = callback_id
