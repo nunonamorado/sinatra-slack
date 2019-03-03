@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative './slack_attachment'
+
 module Sinatra
   module Slack
     module Helpers
@@ -18,7 +20,7 @@ module Sinatra
         def attachment
           return unless block_given?
 
-          attachment = Attachment.new(@callback_id)
+          attachment = Helpers::Attachment.new(@callback_id)
           yield attachment
           @attachments << attachment
         end
