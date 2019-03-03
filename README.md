@@ -31,15 +31,15 @@ require "sinatra/base"
 require "sinatra/slack"
 
 class App < Sinatra::Base
-  register Sinatra::Slack::Signature
-  register Sinatra::Slack::Commands  
-  register Sinatra::Slack::Actions  
+  register Sinatra::Slack
 
   configure :production, :development do
     enable :logging
+    
+    before { logger.info "Received: #{params}" }
   end
 
-  verify_slack_request secret: ENV["SLACK_SIGNING_SECRET"]
+  set :slack_secret, ENV['SLACK_SIGNING_SECRET']
   commands_endpoint "/slack/commands"
   actions_endpoint "/slack/actions"
 
