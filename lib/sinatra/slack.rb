@@ -6,7 +6,7 @@ require_relative './slack/instance_helpers'
 # Sinatra
 module Sinatra
   # Sinatra Module for creating Slack apps with ease
-  module Slack    
+  module Slack
     def self.registered(app)
       # We will use async request handling so that it's easier
       # so offload heavier proccessing to a background thread.
@@ -98,6 +98,9 @@ module Sinatra
         options[:quick_reply] = quick_reply
 
         handle_request(options)
+      rescue StandardError => ex
+        logger.error ex.full_message
+        channel.send(slack_error_notification)
       end
     end
   end

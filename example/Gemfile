@@ -4,6 +4,8 @@ gem "thin"
 gem "httparty"
 gem "sinatra-slack", path: "../"
 
+gem "dotenv", groups: [:development, :test]
+
 group :development do
   gem "pry"
   gem "pry-byebug"

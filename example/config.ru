@@ -3,7 +3,7 @@
 
 require 'rubygems'
 require 'pry'
-require 'sinatra/async'
+require 'dotenv/load'
 
 require File.expand_path 'app.rb', __dir__
 

@@ -27,10 +27,19 @@ module Sinatra
         s_resp
       end
 
+      def slack_error_notification
+        slack_response '' do |r|
+          r.text = 'Ups, something went wrong'
+        end
+      end
+
       def handle_request(request_handler:, request_params:, quick_reply: '...')
         EM.defer do
           deferred_message = request_handler.bind(self).call(*request_params)
           channel.send(deferred_message)
+        rescue StandardError => ex
+          logger.error ex.full_message
+          channel.send(slack_error_notification)
         end
 
         body quick_reply
