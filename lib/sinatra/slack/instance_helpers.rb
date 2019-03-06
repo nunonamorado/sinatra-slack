@@ -35,14 +35,22 @@ module Sinatra
 
       def handle_request(request_handler:, request_params:, quick_reply: '...')
         EM.defer do
-          deferred_message = request_handler.bind(self).call(*request_params)
-          channel.send(deferred_message)
-        rescue StandardError => ex
-          logger.error ex.full_message
-          channel.send(slack_error_notification)
+          handle_with_rescue do
+            deferred_message = request_handler.bind(self).call(*request_params)
+            channel.send(deferred_message)
+          end
         end
 
         body quick_reply
+      end
+
+      def handle_with_rescue
+        return unless block_given?
+
+        yield
+      rescue StandardError => ex
+        logger.error ex.full_message
+        channel.send(slack_error_notification)
       end
 
       # Checks for Slack defined HTTP headers

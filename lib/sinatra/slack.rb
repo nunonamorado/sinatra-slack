@@ -24,6 +24,8 @@ module Sinatra
       set_endpoint(path, quick_reply) do
         signature = "#{command.command} #{command.text}"
         command_pattern = self.class.get_pattern(signature)
+        raise 'Command not defined' unless command_pattern
+
         request_params = command_pattern.params(signature).values
 
         {
@@ -38,6 +40,8 @@ module Sinatra
     def actions_endpoint(path, quick_reply: '')
       set_endpoint(path, quick_reply) do
         action_pattern = self.class.get_pattern(action.name)
+        raise 'Action not defined' unless action_pattern
+
         request_params = action_pattern.params(action.name).values || []
         request_params << action.value
 
@@ -88,19 +92,18 @@ module Sinatra
       define_method("#{path}_options", &block)
 
       settings.apost(path) do
-        halt 401, 'Invalid Headers' unless authorized?
+        handle_with_rescue do
+          halt 401, 'Invalid Headers' unless authorized?
 
-        get_options = self.class.instance_method "#{path}_options"
-        options = get_options.bind(self).call
+          get_options = self.class.instance_method "#{path}_options"          
+          options = get_options.bind(self).call
 
-        halt 400 unless options
+          halt 400 unless options
 
-        options[:quick_reply] = quick_reply
+          options[:quick_reply] = quick_reply
 
-        handle_request(options)
-      rescue StandardError => ex
-        logger.error ex.full_message
-        channel.send(slack_error_notification)
+          handle_request(options)
+        end
       end
     end
   end
