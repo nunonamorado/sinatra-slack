@@ -95,7 +95,7 @@ module Sinatra
         handle_with_rescue do
           halt 401, 'Invalid Headers' unless authorized?
 
-          get_options = self.class.instance_method "#{path}_options"          
+          get_options = self.class.instance_method "#{path}_options"
           options = get_options.bind(self).call
 
           halt 400 unless options

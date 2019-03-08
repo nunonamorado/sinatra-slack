@@ -20,6 +20,10 @@ Or install it yourself as:
 
     $ gem install sinatra-slack
 
+## Dependencies
+
+This gem currently requires you to use [Thin](https://github.com/macournoyer/thin).
+
 ## Example
 
 Go to folder example for more information. Learn how to create a Slack App in https://api.slack.com
@@ -35,7 +39,7 @@ class App < Sinatra::Base
 
   configure :production, :development do
     enable :logging
-    
+
     before { logger.info "Received: #{params}" }
   end
 
@@ -49,11 +53,11 @@ class App < Sinatra::Base
 end
 ```
 
-## Development
+## TODO
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+- Adds specs;
+- Update message helper to use the new [Block Kit](https://api.slack.com/reference/messaging/block-elements);
+- Add more [Interactive Component Elements](https://api.slack.com/reference/messaging/interactive-components). Currently there is only support for *buttons* and *menu*.
 
 ## Contributing
 
@@ -62,7 +66,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/nunona
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the Sinatra::Slack project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/sinatra-slack/blob/master/CODE_OF_CONDUCT.md).
