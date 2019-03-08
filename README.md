@@ -2,7 +2,7 @@
 
 > Note: WIP
 
-Creating your first Slack Slash Command application has never been to easy. Combining `sinatra` and `sinatra-slack` DSL, you can quickly create a app that processes Slach Commands with ease.
+Creating your first Slack Slash Command application has never been to easy. Combining `sinatra` and `sinatra-slack` DSL, you can quickly create a app that processes Slash Commands with ease.
 
 ## Installation
 
