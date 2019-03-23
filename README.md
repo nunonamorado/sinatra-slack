@@ -1,5 +1,10 @@
 # Sinatra::Slack
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/37325817408caa0872e6/maintainability)](https://codeclimate.com/github/nunonamorado/sinatra-slack/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/37325817408caa0872e6/test_coverage)](https://codeclimate.com/github/nunonamorado/sinatra-slack/test_coverage)
+
+
+
 > Note: WIP
 
 Creating your first Slack Slash Command application has never been to easy. Combining `sinatra` and `sinatra-slack` DSL, you can quickly create a app that processes Slash Commands with ease.
