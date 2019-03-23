@@ -13,11 +13,6 @@ module Sinatra
           @attachment_type = 'default'
           @color = '#3AA3E3'
           @actions = []
-
-          @text = ''
-          @fallback = ''
-          @image_url = ''
-          @title = ''
         end
 
         def action_button(name, text, value)
@@ -40,17 +35,17 @@ module Sinatra
 
         def to_json
           att_obj = {}
-
           att_obj[:callback_id] = @callback_id
-
-          att_obj[:title] = title unless title.empty?
-          att_obj[:color] = color unless color.empty?
-          att_obj[:attachment_type] = attachment_type unless attachment_type.empty?
-          att_obj[:text] = text unless text.empty?
-          att_obj[:fallback] = fallback unless fallback.empty?
-          att_obj[:image_url] = image_url unless image_url.empty?
-
           att_obj[:actions] = @actions unless @actions.empty?
+
+          attrs = %i[title color attachment_type text fallback image_url]
+
+          attrs.each do |a|
+            a_value = send(a)
+            next if !a_value || a_value.empty?
+
+            att_obj[a] = a_value
+          end
 
           att_obj
         end
