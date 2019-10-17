@@ -1,5 +1,6 @@
 # Sinatra::Slack
 
+[![Gem Version](https://badge.fury.io/rb/sinatra-slack.svg)](https://badge.fury.io/rb/sinatra-slack)
 [![Maintainability](https://api.codeclimate.com/v1/badges/37325817408caa0872e6/maintainability)](https://codeclimate.com/github/nunonamorado/sinatra-slack/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/37325817408caa0872e6/test_coverage)](https://codeclimate.com/github/nunonamorado/sinatra-slack/test_coverage)
 
