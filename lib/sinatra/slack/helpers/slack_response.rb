@@ -7,7 +7,7 @@ module Sinatra
     module Helpers
       # Represents a message sent to the Slack Channel.
       class SlackResponse
-        attr_accessor :text, :replace_original, :mrkdwn, :response_type
+        attr_accessor :text, :replace_original, :mrkdwn, :response_type, :delete_original
 
         def initialize(callback_id)
           @callback_id = callback_id
@@ -15,6 +15,7 @@ module Sinatra
           @attachments = []
           @replace_original = true
           @response_type = 'ephemeral'
+          @delete_original = false
           @mrkdwn = false
         end
 
@@ -33,6 +34,7 @@ module Sinatra
           response[:mrkdwn] = @mrkdwn
           response[:replace_original] = @replace_original
           response[:response_type] = @response_type
+          response[:delete_original] = @delete_original
 
           response[:attachments] = @attachments.map(&:to_json) unless @attachments.empty?
 
