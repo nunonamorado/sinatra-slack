@@ -27,7 +27,7 @@ module Sinatra
         s_resp
       end
 
-      def slack_error_notification
+      def slack_error_notification(_error)
         slack_response '' do |r|
           r.text = 'Ups, something went wrong'
         end
@@ -50,7 +50,7 @@ module Sinatra
         yield
       rescue StandardError => ex
         logger.error ex.full_message
-        channel.send(slack_error_notification)
+        channel.send(slack_error_notification(ex))
       end
 
       # Checks for Slack defined HTTP headers
